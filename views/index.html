@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>TimeStamp API | Date Converter</title>
+
+  <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+  <header class="navbar">
+    <div class="brand">
+      <div class="brand-icon">⌁</div>
+      <div>
+        <h1>TimeStamp API</h1>
+        <span>Developer Date Utility</span>
+      </div>
+    </div>
+
+    <div class="status">
+      <span class="status-dot"></span>
+      API Online
+    </div>
+  </header>
+
+
+  <main class="container">
+
+    <section class="hero">
+      <div class="hero-content">
+        <span class="badge">REST API • DATE CONVERTER</span>
+
+        <h2>
+          Convert dates into
+          <span>Unix & UTC</span>
+          instantly.
+        </h2>
+
+        <p>
+          A simple timestamp microservice that converts valid dates
+          into Unix timestamps and standardized UTC format.
+        </p>
+      </div>
+    </section>
+
+
+    <section class="converter-card">
+
+      <div class="card-header">
+        <div>
+          <p class="section-label">TIMESTAMP CONVERTER</p>
+          <h3>Enter a date</h3>
+        </div>
+
+        <div class="api-method">GET</div>
+      </div>
+
+      <div class="input-area">
+
+        <label for="dateInput">Date or Unix timestamp</label>
+
+        <div class="input-row">
+          <input
+            type="text"
+            id="dateInput"
+            placeholder="Example: 2015-12-25"
+            autocomplete="off"
+          >
+
+          <button id="convertBtn">
+            Convert
+            <span>→</span>
+          </button>
+        </div>
+
+        <p class="input-hint">
+          Try a date such as <code>2015-12-25</code> or
+          a Unix timestamp such as <code>1451001600000</code>.
+        </p>
+
+      </div>
+
+
+      <div class="quick-tests">
+        <span>Quick test:</span>
+
+        <button class="quick-btn" data-value="2015-12-25">
+          Christmas 2015
+        </button>
+
+        <button class="quick-btn" data-value="1451001600000">
+          Unix Example
+        </button>
+
+        <button class="quick-btn" data-value="">
+          Current Time
+        </button>
+      </div>
+
+
+      <div class="result-container" id="resultContainer">
+
+        <div class="result-header">
+          <div>
+            <p class="section-label">API RESPONSE</p>
+            <h3>Result</h3>
+          </div>
+
+          <span class="response-code">200 OK</span>
+        </div>
+
+        <pre id="result">{
+  "message": "Your converted timestamp will appear here."
+}</pre>
+
+      </div>
+
+    </section>
+
+
+    <section class="api-section">
+
+      <div class="section-title">
+        <p class="section-label">HOW IT WORKS</p>
+        <h3>Simple API endpoint</h3>
+      </div>
+
+      <div class="endpoint-card">
+
+        <div class="endpoint-top">
+          <span class="method">GET</span>
+          <code>/api/:date?</code>
+        </div>
+
+        <p>
+          Send a date or Unix timestamp as the optional URL parameter.
+          Leave the parameter empty to get the current time.
+        </p>
+
+        <div class="examples">
+
+          <div class="example">
+            <span>DATE</span>
+            <code>/api/2015-12-25</code>
+          </div>
+
+          <div class="example">
+            <span>UNIX</span>
+            <code>/api/1451001600000</code>
+          </div>
+
+          <div class="example">
+            <span>CURRENT</span>
+            <code>/api</code>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <section class="response-section">
+
+      <div class="section-title">
+        <p class="section-label">RESPONSE FORMAT</p>
+        <h3>Predictable JSON output</h3>
+      </div>
+
+      <div class="response-grid">
+
+        <div class="info-card">
+          <div class="info-icon">01</div>
+          <h4>Unix Timestamp</h4>
+          <p>
+            Returns the date as the number of milliseconds
+            since January 1, 1970.
+          </p>
+          <code>unix: 1451001600000</code>
+        </div>
+
+        <div class="info-card">
+          <div class="info-icon">02</div>
+          <h4>UTC Date</h4>
+          <p>
+            Returns the same date using the standard UTC
+            date-time format.
+          </p>
+          <code>utc: "Fri, 25 Dec 2015..."</code>
+        </div>
+
+        <div class="info-card">
+          <div class="info-icon">03</div>
+          <h4>Error Handling</h4>
+          <p>
+            Invalid dates return a clear JSON error response
+            instead of crashing the application.
+          </p>
+          <code>error: "Invalid Date"</code>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <footer>
+    <div class="footer-content">
+      <div>
+        <strong>TimeStamp API</strong>
+        <span>Simple. Fast. Developer-friendly.</span>
+      </div>
+
+      <div class="footer-right">
+        Built with Node.js & Express
+      </div>
+    </div>
+  </footer>
+
+
+  <script>
+    const dateInput = document.getElementById("dateInput");
+    const convertBtn = document.getElementById("convertBtn");
+    const result = document.getElementById("result");
+
+    async function convertDate(value) {
+      try {
+        let url = "/api";
+
+        if (value.trim() !== "") {
+          url += "/" + encodeURIComponent(value.trim());
+        }
+
+        const response = await fetch(url);
+        const data = await response.json();
+
+        result.textContent = JSON.stringify(data, null, 2);
+      } catch (error) {
+        result.textContent = JSON.stringify({
+          error: "Unable to connect to API"
+        }, null, 2);
+      }
+    }
+
+    convertBtn.addEventListener("click", function () {
+      convertDate(dateInput.value);
+    });
+
+    dateInput.addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        convertDate(dateInput.value);
+      }
+    });
+
+    document.querySelectorAll(".quick-btn").forEach(function (button) {
+      button.addEventListener("click", function () {
+        const value = button.dataset.value;
+
+        dateInput.value = value;
+
+        convertDate(value);
+      });
+    });
+  </script>
+
+</body>
+</html>
